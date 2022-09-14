@@ -9,6 +9,7 @@ docker==5.0.3
 entrypoints==0.4
 Flask==2.2.2
 fonttools==4.37.0
+from-root==1.0.2
 gitdb==4.0.9
 GitPython==3.1.27
 greenlet==1.1.2
@@ -34,6 +35,7 @@ protobuf==4.21.5
 PyJWT==2.4.0
 pyparsing==3.0.9
 python-dateutil==2.8.2
+python-dotenv==0.21.0
 pytz==2022.2.1
 PyYAML==6.0
 querystring-parser==1.2.4
