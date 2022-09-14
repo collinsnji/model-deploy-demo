@@ -8,18 +8,50 @@
     {% if title %}
     <title>{{ title }}</title>
     {% endif %}
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
 </head>
 
 <body>
-    Make A Prediction
-    <form action="/predict" method="POST" id="predict-form">
-        <input type="text" name="sepallength(cm)" placeholder="Sepal Length">
-        <input type="text" name="sepalwidth(cm)" placeholder="Sepal Width">
-        <input type="text" name="petallength(cm)" placeholder="Petal Length">
-        <input type="text" name="petalwidth(cm)" placeholder="Petal Width">
-        <input type="button" value="Predict" id="predict-button">
-    </form>
-    <div id="results"></div>
+    <div class="container grid-lg">
+        <div class="hero hero-sm">
+            <div class="hero-body">
+                <h3>Making Predictions on an Iris Trained Model</h3>
+                <p>Enter the flower information below</p>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="columns">
+            <div class="column col-md-12 p-2">
+                <form action="/predict" method="POST" id="predict-form">
+                    <div class="form-group">
+                        <label class="form-label" for="sepallength">Sepal Length</label>
+                        <input class="form-input" type="text" id="sepallength" name="sepallength(cm)" pattern="^[0-9]+\.[0-9]+$">
+                        
+                        <label class="form-label" for="sepalwidth">Sepal Width</label>
+                        <input class="form-input" id="sepalwidth" type="text" name="sepalwidth(cm)" pattern="^[0-9]+\.[0-9]+$">
+                        
+                        <label class="form-label" for="petallength">Petal Length</label>
+                        <input class="form-input" id="petallength" type="text" name="petallength(cm)" pattern="^[0-9]+\.[0-9]+$">
+                        
+                        <label class="form-label" for="petalwidth">Petal Width</label>
+                        <input class="form-input" id="petalwidth" type="text" name="petalwidth(cm)" pattern="^[0-9]+\.[0-9]+$">
+                        <div class="my-2">
+                            <button class="btn btn-primary" type="button" id="predict-button">Predict</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="divider-vert" data-content="→"></div>
+            <div class="column col-md-12 p-2">
+                <div id="prediction">
+                    <p>Prediction</p>
+                    <p id="results"></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </body>
 

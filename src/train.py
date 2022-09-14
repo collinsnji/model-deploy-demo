@@ -8,7 +8,7 @@ import mlflow.sklearn
 from from_root import from_root
 from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (accuracy_score, confusion_matrix,
+from sklearn.metrics import (accuracy_score, f1_score, precision_score, recall_score, confusion_matrix,
                              plot_confusion_matrix)
 from sklearn.model_selection import train_test_split
 
@@ -28,7 +28,7 @@ def split_data():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
     return X_train, X_test, y_train, y_test
 
-def build_model(X_train, y_train) -> RandomForestClassifier:
+def build_model(X_train, y_train, params) -> RandomForestClassifier:
     """Build a random forest model using the training data, and return the model.
 
     Args:
@@ -38,7 +38,7 @@ def build_model(X_train, y_train) -> RandomForestClassifier:
     Returns:
         RandomForestClassifier: A random forest model.
     """
-    model = RandomForestClassifier(n_estimators=100)
+    model = RandomForestClassifier(**params)
     model.fit(X_train, y_train)
     return model
 
@@ -74,18 +74,35 @@ def train_model():
     
     # Initialize the MLflow tracking server
     with mlflow.start_run():
-        model = build_model(X_train=X_train, y_train=y_train)
+        model_params = {
+            "n_estimators": 100,
+            "max_depth": 5,
+            "max_features": 'log2',
+            "class_weight": 'balanced',
+            }
+        model = build_model(X_train=X_train, y_train=y_train, params=model_params)
         write_model_to_disk(model)
-        accuracy, _ = model_metrics(model, X_test, y_test)
-        # Log the model metrics to MLflow
+
+        # Log the model metrics visualisations to MLflow
         with tempfile.TemporaryDirectory() as tempdir:
             plot_confusion_matrix(model, X_test, y_test, display_labels=load_iris().target_names, cmap='Blues',)
             plt.savefig(tempdir + '/confusion_matrix.png')
             mlflow.log_artifact(tempdir + '/confusion_matrix.png', 'confusion_matrix')
-        mlflow.log_param('n_estimators', 100)
+        
+        # log model params and metrics to MLflow
+        accuracy, _ = model_metrics(model, X_test, y_test)
+        weighted_f1 = f1_score(y_test, model.predict(X_test), average='weighted')
+        precision = precision_score(y_test, model.predict(X_test), average='weighted')
+        recall = recall_score(y_test, model.predict(X_test), average='weighted')
+
+        mlflow.log_params(model_params)
         mlflow.log_metric('accuracy', accuracy)
+        mlflow.log_metric('weighted_f1', weighted_f1)
+        mlflow.log_metric('precision', precision)
+        mlflow.log_metric('recall', recall)
+
+        # log model to MLflow
         mlflow.sklearn.log_model(model, f'model-{datetime.isoformat(datetime.now())}')
-        datetime.isoformat(datetime.now())
 
 if __name__ == "__main__":
     """Run the training function."""
