@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% endif %}
+</head>
+
+<body>
+    Make A Prediction
+    <form action="/predict" method="POST" id="predict-form">
+        <input type="text" name="sepallength(cm)" placeholder="Sepal Length">
+        <input type="text" name="sepalwidth(cm)" placeholder="Sepal Width">
+        <input type="text" name="petallength(cm)" placeholder="Petal Length">
+        <input type="text" name="petalwidth(cm)" placeholder="Petal Width">
+        <input type="button" value="Predict" id="predict-button">
+    </form>
+    <div id="results"></div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+
+</html>
